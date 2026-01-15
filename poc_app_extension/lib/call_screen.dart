@@ -47,12 +47,12 @@ class _CallScreenState extends State<CallScreen> {
             },
             child: const Text("Connect"),
           ),
-          Row(
-            children: [
-              Expanded(child: RTCVideoView(rtc.localRenderer)),
-              Expanded(child: RTCVideoView(rtc.remoteRenderer)),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     Expanded(child: RTCVideoView(rtc.localRenderer)),
+          //     Expanded(child: RTCVideoView(rtc.remoteRenderer)),
+          //   ],
+          // ),
           TextField(controller: msgCtrl),
           ElevatedButton(
             onPressed: () => rtc.sendMessage(msgCtrl.text),
