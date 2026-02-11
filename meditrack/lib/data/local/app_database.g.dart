@@ -257,6 +257,17 @@ class $MedicinesTable extends Medicines
       'CHECK ("low_stock_alert" IN (0, 1))',
     ),
   );
+  static const VerificationMeta _medicineHtmlDetailMeta =
+      const VerificationMeta('medicineHtmlDetail');
+  @override
+  late final GeneratedColumn<String> medicineHtmlDetail =
+      GeneratedColumn<String>(
+        'medicine_html_detail',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -264,6 +275,7 @@ class $MedicinesTable extends Medicines
     typeId,
     totalQuantity,
     lowStockAlert,
+    medicineHtmlDetail,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -318,6 +330,15 @@ class $MedicinesTable extends Medicines
     } else if (isInserting) {
       context.missing(_lowStockAlertMeta);
     }
+    if (data.containsKey('medicine_html_detail')) {
+      context.handle(
+        _medicineHtmlDetailMeta,
+        medicineHtmlDetail.isAcceptableOrUnknown(
+          data['medicine_html_detail']!,
+          _medicineHtmlDetailMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -347,6 +368,10 @@ class $MedicinesTable extends Medicines
         DriftSqlType.bool,
         data['${effectivePrefix}low_stock_alert'],
       )!,
+      medicineHtmlDetail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}medicine_html_detail'],
+      ),
     );
   }
 
@@ -362,12 +387,14 @@ class Medicine extends DataClass implements Insertable<Medicine> {
   final int typeId;
   final int totalQuantity;
   final bool lowStockAlert;
+  final String? medicineHtmlDetail;
   const Medicine({
     required this.id,
     required this.name,
     required this.typeId,
     required this.totalQuantity,
     required this.lowStockAlert,
+    this.medicineHtmlDetail,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -377,6 +404,9 @@ class Medicine extends DataClass implements Insertable<Medicine> {
     map['type_id'] = Variable<int>(typeId);
     map['total_quantity'] = Variable<int>(totalQuantity);
     map['low_stock_alert'] = Variable<bool>(lowStockAlert);
+    if (!nullToAbsent || medicineHtmlDetail != null) {
+      map['medicine_html_detail'] = Variable<String>(medicineHtmlDetail);
+    }
     return map;
   }
 
@@ -387,6 +417,9 @@ class Medicine extends DataClass implements Insertable<Medicine> {
       typeId: Value(typeId),
       totalQuantity: Value(totalQuantity),
       lowStockAlert: Value(lowStockAlert),
+      medicineHtmlDetail: medicineHtmlDetail == null && nullToAbsent
+          ? const Value.absent()
+          : Value(medicineHtmlDetail),
     );
   }
 
@@ -401,6 +434,9 @@ class Medicine extends DataClass implements Insertable<Medicine> {
       typeId: serializer.fromJson<int>(json['typeId']),
       totalQuantity: serializer.fromJson<int>(json['totalQuantity']),
       lowStockAlert: serializer.fromJson<bool>(json['lowStockAlert']),
+      medicineHtmlDetail: serializer.fromJson<String?>(
+        json['medicineHtmlDetail'],
+      ),
     );
   }
   @override
@@ -412,6 +448,7 @@ class Medicine extends DataClass implements Insertable<Medicine> {
       'typeId': serializer.toJson<int>(typeId),
       'totalQuantity': serializer.toJson<int>(totalQuantity),
       'lowStockAlert': serializer.toJson<bool>(lowStockAlert),
+      'medicineHtmlDetail': serializer.toJson<String?>(medicineHtmlDetail),
     };
   }
 
@@ -421,12 +458,16 @@ class Medicine extends DataClass implements Insertable<Medicine> {
     int? typeId,
     int? totalQuantity,
     bool? lowStockAlert,
+    Value<String?> medicineHtmlDetail = const Value.absent(),
   }) => Medicine(
     id: id ?? this.id,
     name: name ?? this.name,
     typeId: typeId ?? this.typeId,
     totalQuantity: totalQuantity ?? this.totalQuantity,
     lowStockAlert: lowStockAlert ?? this.lowStockAlert,
+    medicineHtmlDetail: medicineHtmlDetail.present
+        ? medicineHtmlDetail.value
+        : this.medicineHtmlDetail,
   );
   Medicine copyWithCompanion(MedicinesCompanion data) {
     return Medicine(
@@ -439,6 +480,9 @@ class Medicine extends DataClass implements Insertable<Medicine> {
       lowStockAlert: data.lowStockAlert.present
           ? data.lowStockAlert.value
           : this.lowStockAlert,
+      medicineHtmlDetail: data.medicineHtmlDetail.present
+          ? data.medicineHtmlDetail.value
+          : this.medicineHtmlDetail,
     );
   }
 
@@ -449,14 +493,21 @@ class Medicine extends DataClass implements Insertable<Medicine> {
           ..write('name: $name, ')
           ..write('typeId: $typeId, ')
           ..write('totalQuantity: $totalQuantity, ')
-          ..write('lowStockAlert: $lowStockAlert')
+          ..write('lowStockAlert: $lowStockAlert, ')
+          ..write('medicineHtmlDetail: $medicineHtmlDetail')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, typeId, totalQuantity, lowStockAlert);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    typeId,
+    totalQuantity,
+    lowStockAlert,
+    medicineHtmlDetail,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -465,7 +516,8 @@ class Medicine extends DataClass implements Insertable<Medicine> {
           other.name == this.name &&
           other.typeId == this.typeId &&
           other.totalQuantity == this.totalQuantity &&
-          other.lowStockAlert == this.lowStockAlert);
+          other.lowStockAlert == this.lowStockAlert &&
+          other.medicineHtmlDetail == this.medicineHtmlDetail);
 }
 
 class MedicinesCompanion extends UpdateCompanion<Medicine> {
@@ -474,12 +526,14 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
   final Value<int> typeId;
   final Value<int> totalQuantity;
   final Value<bool> lowStockAlert;
+  final Value<String?> medicineHtmlDetail;
   const MedicinesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.typeId = const Value.absent(),
     this.totalQuantity = const Value.absent(),
     this.lowStockAlert = const Value.absent(),
+    this.medicineHtmlDetail = const Value.absent(),
   });
   MedicinesCompanion.insert({
     this.id = const Value.absent(),
@@ -487,6 +541,7 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
     required int typeId,
     required int totalQuantity,
     required bool lowStockAlert,
+    this.medicineHtmlDetail = const Value.absent(),
   }) : name = Value(name),
        typeId = Value(typeId),
        totalQuantity = Value(totalQuantity),
@@ -497,6 +552,7 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
     Expression<int>? typeId,
     Expression<int>? totalQuantity,
     Expression<bool>? lowStockAlert,
+    Expression<String>? medicineHtmlDetail,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -504,6 +560,8 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
       if (typeId != null) 'type_id': typeId,
       if (totalQuantity != null) 'total_quantity': totalQuantity,
       if (lowStockAlert != null) 'low_stock_alert': lowStockAlert,
+      if (medicineHtmlDetail != null)
+        'medicine_html_detail': medicineHtmlDetail,
     });
   }
 
@@ -513,6 +571,7 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
     Value<int>? typeId,
     Value<int>? totalQuantity,
     Value<bool>? lowStockAlert,
+    Value<String?>? medicineHtmlDetail,
   }) {
     return MedicinesCompanion(
       id: id ?? this.id,
@@ -520,6 +579,7 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
       typeId: typeId ?? this.typeId,
       totalQuantity: totalQuantity ?? this.totalQuantity,
       lowStockAlert: lowStockAlert ?? this.lowStockAlert,
+      medicineHtmlDetail: medicineHtmlDetail ?? this.medicineHtmlDetail,
     );
   }
 
@@ -541,6 +601,9 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
     if (lowStockAlert.present) {
       map['low_stock_alert'] = Variable<bool>(lowStockAlert.value);
     }
+    if (medicineHtmlDetail.present) {
+      map['medicine_html_detail'] = Variable<String>(medicineHtmlDetail.value);
+    }
     return map;
   }
 
@@ -551,7 +614,8 @@ class MedicinesCompanion extends UpdateCompanion<Medicine> {
           ..write('name: $name, ')
           ..write('typeId: $typeId, ')
           ..write('totalQuantity: $totalQuantity, ')
-          ..write('lowStockAlert: $lowStockAlert')
+          ..write('lowStockAlert: $lowStockAlert, ')
+          ..write('medicineHtmlDetail: $medicineHtmlDetail')
           ..write(')'))
         .toString();
   }
@@ -2155,6 +2219,7 @@ typedef $$MedicinesTableCreateCompanionBuilder =
       required int typeId,
       required int totalQuantity,
       required bool lowStockAlert,
+      Value<String?> medicineHtmlDetail,
     });
 typedef $$MedicinesTableUpdateCompanionBuilder =
     MedicinesCompanion Function({
@@ -2163,6 +2228,7 @@ typedef $$MedicinesTableUpdateCompanionBuilder =
       Value<int> typeId,
       Value<int> totalQuantity,
       Value<bool> lowStockAlert,
+      Value<String?> medicineHtmlDetail,
     });
 
 final class $$MedicinesTableReferences
@@ -2257,6 +2323,11 @@ class $$MedicinesTableFilterComposer
 
   ColumnFilters<bool> get lowStockAlert => $composableBuilder(
     column: $table.lowStockAlert,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get medicineHtmlDetail => $composableBuilder(
+    column: $table.medicineHtmlDetail,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2363,6 +2434,11 @@ class $$MedicinesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get medicineHtmlDetail => $composableBuilder(
+    column: $table.medicineHtmlDetail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$MedicinesTypesTableOrderingComposer get typeId {
     final $$MedicinesTypesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2409,6 +2485,11 @@ class $$MedicinesTableAnnotationComposer
 
   GeneratedColumn<bool> get lowStockAlert => $composableBuilder(
     column: $table.lowStockAlert,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get medicineHtmlDetail => $composableBuilder(
+    column: $table.medicineHtmlDetail,
     builder: (column) => column,
   );
 
@@ -2523,12 +2604,14 @@ class $$MedicinesTableTableManager
                 Value<int> typeId = const Value.absent(),
                 Value<int> totalQuantity = const Value.absent(),
                 Value<bool> lowStockAlert = const Value.absent(),
+                Value<String?> medicineHtmlDetail = const Value.absent(),
               }) => MedicinesCompanion(
                 id: id,
                 name: name,
                 typeId: typeId,
                 totalQuantity: totalQuantity,
                 lowStockAlert: lowStockAlert,
+                medicineHtmlDetail: medicineHtmlDetail,
               ),
           createCompanionCallback:
               ({
@@ -2537,12 +2620,14 @@ class $$MedicinesTableTableManager
                 required int typeId,
                 required int totalQuantity,
                 required bool lowStockAlert,
+                Value<String?> medicineHtmlDetail = const Value.absent(),
               }) => MedicinesCompanion.insert(
                 id: id,
                 name: name,
                 typeId: typeId,
                 totalQuantity: totalQuantity,
                 lowStockAlert: lowStockAlert,
+                medicineHtmlDetail: medicineHtmlDetail,
               ),
           withReferenceMapper: (p0) => p0
               .map(

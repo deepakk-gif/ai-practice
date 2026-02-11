@@ -12,5 +12,5 @@ class Medicines extends Table {
   IntColumn get totalQuantity=> integer()(); // total medicine
 
   BoolColumn get lowStockAlert=> boolean()(); // low stock alert
-
+  TextColumn get medicineHtmlDetail=> text().nullable()(); // low stock alert
 }

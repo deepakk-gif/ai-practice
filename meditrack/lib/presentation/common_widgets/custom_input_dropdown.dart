@@ -2,7 +2,6 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:meditrack/presentation/common_model/dropdown_value_model.dart';
 import 'package:meditrack/presentation/common_widgets/tooltip_widget.dart';
-import 'package:super_tooltip/super_tooltip.dart';
 import 'spacing_widgets.dart';
 
 class CustomDropdownInput<T> extends StatefulWidget {
@@ -64,6 +63,7 @@ class _CustomDropdownInputState<T> extends State<CustomDropdownInput<T>> {
 
         /// Dropdown plugin
         DropdownSearch<DropdownValueModel>(
+          
           selectedItem: widget.value != null
               ? (widget.value as DropdownValueModel)
               : null,
@@ -99,6 +99,7 @@ class _CustomDropdownInputState<T> extends State<CustomDropdownInput<T>> {
             // ),
           ),
           compareFn: (item, selectedItem) => item.value == selectedItem.value,
+
 
           decoratorProps: DropDownDecoratorProps(
             decoration: InputDecoration(
