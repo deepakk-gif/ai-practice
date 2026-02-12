@@ -54,6 +54,8 @@ dependencies:
   just_audio: ^0.9.36             # Audio playback (for preview)
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 
